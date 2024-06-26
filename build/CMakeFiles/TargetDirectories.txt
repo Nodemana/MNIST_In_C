@@ -1,0 +1,3 @@
+/home/zach/projects/MNIST_C_NN/build/CMakeFiles/cmnist.dir
+/home/zach/projects/MNIST_C_NN/build/CMakeFiles/edit_cache.dir
+/home/zach/projects/MNIST_C_NN/build/CMakeFiles/rebuild_cache.dir

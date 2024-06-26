@@ -1,40 +1,32 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <unistd.h>
+#include "sigmoid.h"
+#include "matrixmath.h"
 
-
-typedef struct {
-    int length;
-    double *data;
-} Vector;
-
-typedef struct {
-    int rows;
-    int cols;
-    Vector **data;
-} Matrix;
-
+// Function to create a vector
 Vector vector(int length) {
     Vector v;
     v.length = length;
-    v.data = (double*)malloc(length * sizeof(double *));
+    v.data = (double *)malloc(length * sizeof(double));
     return v;
 }
 
-Matrix matrix(int x, int y) {
+// Function to create a matrix
+Matrix matrix(int rows, int cols) {
     Matrix m;
-    m.rows = x;
-    m.cols = y;
-    m.data = (Vector **)malloc(m.rows * sizeof(Vector *));
+    m.rows = rows;
+    m.cols = cols;
+    m.data = (double **)malloc(m.rows * sizeof(double *));
     for (int i = 0; i < m.rows; i++) {
-        m.data[i] = (Vector *)malloc(m.cols * sizeof(Vector));
-        for (int j = 0; j < m.cols; j++) {
-            m.data[i][j] = *vector(vector_length);
-        }
+        m.data[i] = (double *)malloc(m.cols * sizeof(double));
     }
     return m;
 }
 
+// Function to free memory allocated for a matrix
 void free_matrix(Matrix *m) {
     for (int i = 0; i < m->rows; i++) {
         free(m->data[i]);
@@ -53,33 +45,29 @@ void print_vector(Vector *v) {
     printf("\n");
 }
 
-// Function to print a matrix of vectors
+// Function to print a matrix of doubles
 void print_matrix(Matrix *m) {
     for (int i = 0; i < m->rows; i++) {
         for (int j = 0; j < m->cols; j++) {
-            print_vector(&(m->data[i][j]));
+            printf("%lf ", m->data[i][j]);
         }
         printf("\n");
     }
 }
 
 // Function to multiply two matrices
-Matrix dot_product(Matrix *m, Matrix *n) {
+Matrix matrix_multiply(Matrix *m, Matrix *n) {
     if (m->cols != n->rows) {
         printf("ERROR: Row and Column Mismatch!\n");
         exit(EXIT_FAILURE);
     }
 
-    int vector_length = m->data[0][0].length;
-    Matrix result = create_matrix(m->rows, n->cols, vector_length);
+    Matrix result = matrix(m->rows, n->cols);
     for (int i = 0; i < m->rows; i++) {
         for (int j = 0; j < n->cols; j++) {
-            double dot_product_value = 0.0;
+            result.data[i][j] = 0.0;
             for (int k = 0; k < m->cols; k++) {
-                dot_product_value += vector_dot_product(&(m->data[i][k]), &(n->data[k][j]));
-            }
-            for (int l = 0; l < vector_length; l++) {
-                result.data[i][j].data[l] = dot_product_value;
+                result.data[i][j] += m->data[i][k] * n->data[k][j];
             }
         }
     }
@@ -87,6 +75,29 @@ Matrix dot_product(Matrix *m, Matrix *n) {
     return result;
 }
 
+Matrix matrix_add(Matrix *m, Matrix *n) {
+    if(m->rows != n->rows || m->cols != n->cols){
+        printf("ERROR: Matrices Dimensions Don't Match!\n");
+        exit(EXIT_FAILURE);
+    }
+    Matrix result = matrix(m->rows, n->cols);
+    for(int i = 0; i < m->rows; i++) {
+        for(int j = 0; j < m->cols; j++) {
+            result.data[i][j] = m->data[i][j] + n->data[i][j];
+        }
+    }
+    return result;
+}
+
+Matrix transpose_matrix(Matrix *a) {
+    Matrix result = matrix(a->cols, a->rows);
+    for (int i = 0; i < a->cols; i++) {
+        for (int j = 0; j < a->rows; j++) {
+            result.data[i][j] = a->data[j][i];
+        }
+    }
+    return result;
+}
 
 // Function to calculate the dot product of two vectors
 double vector_dot_product(Vector *v1, Vector *v2) {
@@ -101,32 +112,30 @@ double vector_dot_product(Vector *v1, Vector *v2) {
     return result;
 }
 
-int main() {
-    // Define matrices
-    Matrix n = create_matrix(3, 1);
-    n.data[0][0] = 1;
-    n.data[1][0] = 2;
-    n.data[2][0] = 3;
-    
-    Matrix m = create_matrix(1, 3);
-    m.data[0][0] = 2;
-    m.data[0][1] = 2;
-    m.data[0][2] = 3;
-    // Multiply matrices
-    //Matrix result = multiply_matrices(&m, &n);
-    double c = vector_dot_product(&m, &n);
-    // Print matrices
-    printf("Matrix M\n");
-    print_matrix(&m);
-    printf("\nMatrix N\n");
-    print_matrix(&n);
-    //printf("\nResult Matrix\n");
-    //print_matrix(&result);
-    printf("Result: %lf\n", c);
-    // Free matrices
-    free_matrix(&m);
-    free_matrix(&n);
-    //free_matrix(&result);
-
-    return 0;
+double random_double() {
+    return (double)rand()/RAND_MAX*2.0-1.0;
 }
+
+Matrix init_matrix(int rows, int cols) {
+    Matrix result = matrix(rows, cols);
+
+    for(int i = 0; i<rows; i++) {
+        for(int j = 0; j<cols; j++) {
+            result.data[i][j] = random_double();
+        }
+    }
+    return result;
+}
+
+Matrix activation(Matrix *m) {
+    Matrix result = matrix(m->rows, m->cols);
+
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            result.data[i][j] = sigmoid(m->data[i][j]);        
+        }
+    }
+    return result;
+}
+
+
