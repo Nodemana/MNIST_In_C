@@ -1,5 +1,7 @@
 #include "sigmoid.h"
 #include "matrixmath.h"
+#include "neural.h"
+#include "mnist.h"
 
 int main() {
     srand(time(0) + getpid());
@@ -53,5 +55,27 @@ int main() {
     printf("Sigmoid Matrix:\n");
     Matrix a = activation(&k);
     print_matrix(&a);
+    printf("\n");
+
+    Matrix actual = init_matrix_value(10,1,0);
+
+    actual.data[5][0] = 1;
+
+    Matrix predicted = init_matrix(10,1);
+    
+    printf("Predicted Matrix:\n");
+    print_matrix(&predicted);
+    printf("Actual Matrix:\n");
+    print_matrix(&actual);
+
+    Matrix cost_result = compute_cost_matrix(&predicted, &actual);
+    printf("Cost Matrix:\n");
+    print_matrix(&cost_result);
+    free_matrix(&predicted);
+    free_matrix(&actual);
+    free_matrix(&cost_result);
+
+    load_mnist();
+    print_mnist_pixel(train_image, 1);
     return 0;
 }

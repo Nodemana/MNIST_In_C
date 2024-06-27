@@ -81,12 +81,12 @@ clean: CMakeFiles/cmnist.dir/clean
 CMakeFiles/cmnist.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/zach/projects/MNIST_C_NN/build/CMakeFiles --progress-num=1,2,3,4 "Built target cmnist"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/zach/projects/MNIST_C_NN/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target cmnist"
 .PHONY : CMakeFiles/cmnist.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cmnist.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zach/projects/MNIST_C_NN/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zach/projects/MNIST_C_NN/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cmnist.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/zach/projects/MNIST_C_NN/build/CMakeFiles 0
 .PHONY : CMakeFiles/cmnist.dir/rule

@@ -43,6 +43,8 @@ double random_double();
 
 Matrix init_matrix(int rows, int cols);
 
+Matrix init_matrix_value(int rows, int cols, double value); 
+
 Matrix activation(Matrix *m);
 
 #endif

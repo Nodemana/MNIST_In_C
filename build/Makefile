@@ -177,6 +177,30 @@ matrixmath.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/matrixmath.c.s
 .PHONY : matrixmath.c.s
 
+neural.o: neural.c.o
+.PHONY : neural.o
+
+# target to build an object file
+neural.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/neural.c.o
+.PHONY : neural.c.o
+
+neural.i: neural.c.i
+.PHONY : neural.i
+
+# target to preprocess a source file
+neural.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/neural.c.i
+.PHONY : neural.c.i
+
+neural.s: neural.c.s
+.PHONY : neural.s
+
+# target to generate assembly for a file
+neural.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cmnist.dir/build.make CMakeFiles/cmnist.dir/neural.c.s
+.PHONY : neural.c.s
+
 sigmoid.o: sigmoid.c.o
 .PHONY : sigmoid.o
 
@@ -216,6 +240,9 @@ help:
 	@echo "... matrixmath.o"
 	@echo "... matrixmath.i"
 	@echo "... matrixmath.s"
+	@echo "... neural.o"
+	@echo "... neural.i"
+	@echo "... neural.s"
 	@echo "... sigmoid.o"
 	@echo "... sigmoid.i"
 	@echo "... sigmoid.s"

@@ -56,6 +56,8 @@ void print_matrix(Matrix *m) {
 }
 
 // Function to multiply two matrices
+// This function is used to compute the dot product between the last activation
+// and the next layers weights.
 Matrix matrix_multiply(Matrix *m, Matrix *n) {
     if (m->cols != n->rows) {
         printf("ERROR: Row and Column Mismatch!\n");
@@ -75,6 +77,9 @@ Matrix matrix_multiply(Matrix *m, Matrix *n) {
     return result;
 }
 
+// Function to add to matrices togethor
+// This function is used to add the bias vector to the resultant vector of the
+// dot product between the weights and last activation.
 Matrix matrix_add(Matrix *m, Matrix *n) {
     if(m->rows != n->rows || m->cols != n->cols){
         printf("ERROR: Matrices Dimensions Don't Match!\n");
@@ -89,6 +94,7 @@ Matrix matrix_add(Matrix *m, Matrix *n) {
     return result;
 }
 
+// Function transposes a given matrix.
 Matrix transpose_matrix(Matrix *a) {
     Matrix result = matrix(a->cols, a->rows);
     for (int i = 0; i < a->cols; i++) {
@@ -112,10 +118,12 @@ double vector_dot_product(Vector *v1, Vector *v2) {
     return result;
 }
 
+// Used to initialise matrices with random doubles.
 double random_double() {
     return (double)rand()/RAND_MAX*2.0-1.0;
 }
 
+// This function generates a matrice of a certain size of random doubles.
 Matrix init_matrix(int rows, int cols) {
     Matrix result = matrix(rows, cols);
 
@@ -127,6 +135,19 @@ Matrix init_matrix(int rows, int cols) {
     return result;
 }
 
+// This function generates a matrice of a certain size with a given double value.
+Matrix init_matrix_value(int rows, int cols, double value) {
+    Matrix result = matrix(rows, cols);
+
+    for(int i = 0; i<rows; i++) {
+        for(int j = 0; j<cols; j++) {
+            result.data[i][j] = value;
+        }
+    }
+    return result;
+}
+
+// This function applys the activation function (sigmoid) on a given matrice.
 Matrix activation(Matrix *m) {
     Matrix result = matrix(m->rows, m->cols);
 

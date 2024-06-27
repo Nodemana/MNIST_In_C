@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/zach/projects/MNIST_C_NN/main.c" "CMakeFiles/cmnist.dir/main.c.o" "gcc" "CMakeFiles/cmnist.dir/main.c.o.d"
   "/home/zach/projects/MNIST_C_NN/matrixmath.c" "CMakeFiles/cmnist.dir/matrixmath.c.o" "gcc" "CMakeFiles/cmnist.dir/matrixmath.c.o.d"
+  "/home/zach/projects/MNIST_C_NN/neural.c" "CMakeFiles/cmnist.dir/neural.c.o" "gcc" "CMakeFiles/cmnist.dir/neural.c.o.d"
   "/home/zach/projects/MNIST_C_NN/sigmoid.c" "CMakeFiles/cmnist.dir/sigmoid.c.o" "gcc" "CMakeFiles/cmnist.dir/sigmoid.c.o.d"
   )
 

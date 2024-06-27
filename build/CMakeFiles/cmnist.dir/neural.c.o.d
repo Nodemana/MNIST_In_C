@@ -1,5 +1,5 @@
-CMakeFiles/cmnist.dir/main.c.o: /home/zach/projects/MNIST_C_NN/main.c \
- /usr/include/stdc-predef.h /home/zach/projects/MNIST_C_NN/sigmoid.h \
+CMakeFiles/cmnist.dir/neural.c.o: /home/zach/projects/MNIST_C_NN/neural.c \
+ /usr/include/stdc-predef.h /home/zach/projects/MNIST_C_NN/neural.h \
  /home/zach/projects/MNIST_C_NN/matrixmath.h /usr/include/math.h \
  /usr/include/bits/libc-header-start.h /usr/include/features.h \
  /usr/include/features-time64.h /usr/include/bits/wordsize.h \
@@ -42,8 +42,4 @@ CMakeFiles/cmnist.dir/main.c.o: /home/zach/projects/MNIST_C_NN/main.c \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
  /usr/include/bits/getopt_posix.h /usr/include/bits/getopt_core.h \
- /usr/include/bits/unistd_ext.h /home/zach/projects/MNIST_C_NN/neural.h \
- /home/zach/projects/MNIST_C_NN/mnist.h /usr/include/fcntl.h \
- /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
- /usr/include/bits/stat.h /usr/include/bits/struct_stat.h \
- /usr/include/string.h /usr/include/strings.h
+ /usr/include/bits/unistd_ext.h /home/zach/projects/MNIST_C_NN/sigmoid.h
