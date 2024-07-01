@@ -71,11 +71,33 @@ int main() {
     Matrix cost_result = compute_cost_matrix(&predicted, &actual);
     printf("Cost Matrix:\n");
     print_matrix(&cost_result);
+
+    compute_cost_matrix_sum(&cost_result, &predicted, &actual);
+    printf("Cost Matrix Sum:\n");
+    print_matrix(&cost_result);
+
+    Matrix cost_flatten = sum_vertically(&k);
+    printf("Cost Flatten:\n");
+    print_matrix(&cost_flatten);
+
+    free_matrix(&cost_flatten);
+
     free_matrix(&predicted);
     free_matrix(&actual);
     free_matrix(&cost_result);
 
-    load_mnist();
-    print_mnist_pixel(train_image, 1);
+    //load_mnist();
+    //print_mnist_pixel(train_image, 1);
+    int num_layers = 3;
+    int layer_sizes[] = {2, 2, 1};
+    int input_layer_size = 3;
+
+    Network network = init_network(num_layers, layer_sizes, input_layer_size);
+
+    print_network(&network);
+
+    free_network(&network);
+
+
     return 0;
 }

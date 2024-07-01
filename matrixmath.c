@@ -94,6 +94,39 @@ Matrix matrix_add(Matrix *m, Matrix *n) {
     return result;
 }
 
+// Function to add to matrices togethor
+// This function is used to add the bias vector to the resultant vector of the
+// dot product between the weights and last activation.
+void matrix_add_inplace(Matrix *m, Matrix *n) {
+    if(m->rows != n->rows || m->cols != n->cols){
+        printf("ERROR: Matrices Dimensions Don't Match!\n");
+        exit(EXIT_FAILURE);
+    }
+    for(int i = 0; i < m->rows; i++) {
+        for(int j = 0; j < m->cols; j++) {
+            m->data[i][j] = m->data[i][j] + n->data[i][j];
+        }
+    }
+}
+
+Matrix matrix_scalar_divide(Matrix *m, double x) {
+    Matrix result = matrix(m->rows, m->cols);
+    for(int i = 0; i< m->rows; i++) {
+        for(int j = 0; j< m->cols; j++){
+            result.data[i][j] = m->data[i][j] / x;
+        }
+    }
+    return result;
+}
+
+void matrix_scalar_divide_inplace(Matrix *m, double x) {
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            m->data[i][j] /= x;
+        }
+    }
+}
+
 // Function transposes a given matrix.
 Matrix transpose_matrix(Matrix *a) {
     Matrix result = matrix(a->cols, a->rows);
@@ -147,6 +180,26 @@ Matrix init_matrix_value(int rows, int cols, double value) {
     return result;
 }
 
+Matrix sum_horizontally(Matrix *m) {
+    Matrix result = init_matrix_value(m->rows, 1, 0);
+    for(int i = 0; i < m->rows; i++) {
+        for(int j = 0; j < m->cols; j++) {
+            result.data[i][0] += m->data[i][j];
+        }
+    }
+    return result;
+}
+
+Matrix sum_vertically(Matrix *m) {
+    Matrix result = init_matrix_value(1, m->cols, 0);
+    for(int j = 0; j < m->cols; j++) {
+        for(int i = 0; i < m->rows; i++) {
+            result.data[0][j] += m->data[i][j];
+        }
+    }
+    return result;
+}
+
 // This function applys the activation function (sigmoid) on a given matrice.
 Matrix activation(Matrix *m) {
     Matrix result = matrix(m->rows, m->cols);
@@ -159,4 +212,11 @@ Matrix activation(Matrix *m) {
     return result;
 }
 
+void activation_inplace(Matrix *m) {
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            m->data[i][j] = sigmoid(m->data[i][j]);        
+        }
+    }
+}
 

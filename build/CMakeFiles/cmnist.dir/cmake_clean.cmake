@@ -1,14 +1,16 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/cmnist.dir/main.c.o"
-  "CMakeFiles/cmnist.dir/main.c.o.d"
-  "CMakeFiles/cmnist.dir/matrixmath.c.o"
-  "CMakeFiles/cmnist.dir/matrixmath.c.o.d"
-  "CMakeFiles/cmnist.dir/neural.c.o"
-  "CMakeFiles/cmnist.dir/neural.c.o.d"
-  "CMakeFiles/cmnist.dir/sigmoid.c.o"
-  "CMakeFiles/cmnist.dir/sigmoid.c.o.d"
-  "cmnist"
+  "CMakeFiles/cmnist.dir/main.c.obj"
+  "CMakeFiles/cmnist.dir/main.c.obj.d"
+  "CMakeFiles/cmnist.dir/matrixmath.c.obj"
+  "CMakeFiles/cmnist.dir/matrixmath.c.obj.d"
+  "CMakeFiles/cmnist.dir/neural.c.obj"
+  "CMakeFiles/cmnist.dir/neural.c.obj.d"
+  "CMakeFiles/cmnist.dir/sigmoid.c.obj"
+  "CMakeFiles/cmnist.dir/sigmoid.c.obj.d"
+  "cmnist.exe"
+  "cmnist.exe.manifest"
   "cmnist.pdb"
+  "libcmnist.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.
