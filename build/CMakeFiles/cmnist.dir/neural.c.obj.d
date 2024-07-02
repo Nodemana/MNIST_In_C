@@ -38,4 +38,6 @@ CMakeFiles/cmnist.dir/neural.c.obj: \
  C:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include/sys/types.h \
  C:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include/getopt.h \
  C:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include/pthread_unistd.h \
- C:\Users\User\Documents\Projects\MNIST_In_C\sigmoid.h
+ C:\Users\User\Documents\Projects\MNIST_In_C\sigmoid.h \
+ C:\Users\User\Documents\Projects\MNIST_In_C\mnist.h \
+ C:/ProgramData/mingw64/mingw64/x86_64-w64-mingw32/include/fcntl.h

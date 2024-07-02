@@ -131,6 +131,21 @@ ForwardPassResult forward_pass(Network *network, Matrix *input_layer) {
     return result;
 }
 
+Batch forward_pass_batch(Network *network, double (*data_image)[784], int batch_size, int num_samples) {
+    Batch batch;
+    batch.batch_size = batch_size;
+    batch.forwardpasses = malloc(batch.batch_size * sizeof(ForwardPassResult));
+
+    int current_index = 0;
+    for(int i = 0; i < batch.batch_size; i++) {
+        Matrix input = extract_next_image(data_image, &current_index, num_samples);
+        batch.forwardpasses[i] = forward_pass(network, &input);
+        free_matrix(&input);
+    }
+
+    return batch;
+}
+
 // Don't forget to add a function to free the ForwardPassResult
 void free_forward_pass_result(ForwardPassResult *result) {
     for (int i = 0; i < result->num_activations; i++) {

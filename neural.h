@@ -1,4 +1,5 @@
 #include "matrixmath.h"
+#include "mnist.h"
 #include <math.h>
 
 typedef struct {
@@ -15,6 +16,12 @@ typedef struct {
     Matrix *activations;
     int num_activations;
 } ForwardPassResult;
+
+typedef struct {
+    ForwardPassResult *forwardpasses;
+    Matrix *truths;
+    int batch_size;
+} Batch;
 
 double squared_error(double y_hat, double y);
 
@@ -39,3 +46,5 @@ void print_network(Network *network);
 Matrix forward_pass_layer(Layer *layer, Matrix *input);
 
 ForwardPassResult forward_pass(Network *network, Matrix *input_layer);
+
+Batch forward_pass_batch(Network *network, double (*data_image)[784], int batch_size, int num_samples);
