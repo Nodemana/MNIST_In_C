@@ -59,4 +59,6 @@ Matrix sum_horizontally(Matrix *m);
 
 Matrix sum_vertically(Matrix *m);
 
+Matrix copy_matrix(Matrix *m);
+
 #endif

@@ -33,6 +33,14 @@ Matrix init_weights_layer(int neurons, int weights) {
     return layer;
 }
 
+Matrix init_truth_matrix(int *train_label, int *current_index) {
+    Matrix truth = init_matrix_value(10, 1, 0);
+
+    truth.data[train_label[*current_index]][0] = 1; 
+    
+    return truth;
+}
+
 Matrix init_bias_layer(int neurons, int biases) {
     Matrix layer = init_matrix(neurons, biases); 
     return layer;
@@ -52,7 +60,7 @@ Network init_network(int num_layers, int *layer_sizes, int input_layer_size) {
 
     for (int i = 0; i < num_layers; i++) {
         int neurons = layer_sizes[i];
-        int connections = (i == 0) ? input_layer_size * layer_sizes[i] : layer_sizes[i - 1] * layer_sizes[i];  // Connections i.e wieghts and bias matrices are neurons[i-1] * neurons[i]
+        int connections = (i == 0) ? input_layer_size : layer_sizes[i - 1];  // Connections i.e wieghts and bias matrices are neurons[i-1] * neurons[i]
         network.layers[i] = init_layer(neurons, connections);
     }
 
@@ -93,13 +101,40 @@ void print_network(Network *network) {
 
 Matrix forward_pass_layer(Layer *layer, Matrix *input) {
     Matrix result = matrix_multiply(&layer->weights, input);
-    Matrix result_sum = sum_horizontally(&result);
-    free_matrix(&result);
-    matrix_add_inplace(&result_sum, &layer->biases);
-    activation_inplace(&result_sum);
-    return result_sum;
+    matrix_add_inplace(&result, &layer->biases);
+    activation_inplace(&result);
+    return result;
 }
 
-//Matrix forward_pass(Network *network, Matrix *input_layer) {
+ForwardPassResult forward_pass(Network *network, Matrix *input_layer) {
+    ForwardPassResult result;
+    result.num_activations = network->num_layers + 1;  // +1 for input layer
+    result.activations = malloc(result.num_activations * sizeof(Matrix));
+    
+    // Store input as first activation
+    result.activations[0] = copy_matrix(input_layer);
 
-//}
+    Matrix current_input = copy_matrix(input_layer);
+
+    for (int i = 0; i < network->num_layers; i++) {
+        Matrix layer_output = forward_pass_layer(&network->layers[i], &current_input);
+        
+        // Store the activation
+        result.activations[i + 1] = copy_matrix(&layer_output);
+
+        // Free the previous input and update for next iteration
+        free_matrix(&current_input);
+        current_input = layer_output;
+    }
+
+    // The last activation is also the final output
+    return result;
+}
+
+// Don't forget to add a function to free the ForwardPassResult
+void free_forward_pass_result(ForwardPassResult *result) {
+    for (int i = 0; i < result->num_activations; i++) {
+        free_matrix(&result->activations[i]);
+    }
+    free(result->activations);
+}

@@ -220,3 +220,13 @@ void activation_inplace(Matrix *m) {
     }
 }
 
+// Helper function to copy a matrix
+Matrix copy_matrix(Matrix *m) {
+    Matrix copy = matrix(m->rows, m->cols);
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            copy.data[i][j] = m->data[i][j];
+        }
+    }
+    return copy;
+}

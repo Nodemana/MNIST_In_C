@@ -26,6 +26,8 @@ https://github.com/takafumihoriuchi/MNIST_for_C
 #define MAX_FILENAME 256
 #define MAX_NUM_OF_IMAGES 1
 
+#define IMAGE_SIZE 784  // 28x28 pixels
+
 unsigned char image[MAX_NUM_OF_IMAGES][MAX_IMAGESIZE][MAX_IMAGESIZE];
 int width[MAX_NUM_OF_IMAGES], height[MAX_NUM_OF_IMAGES];
 
@@ -193,4 +195,21 @@ void save_mnist_pgm(double data_image[][SIZE], int index)
     }
 
     save_image(n, "");
+}
+
+Matrix extract_next_image(double data_image[][IMAGE_SIZE], int *current_index, int num_data) {
+    if (*current_index >= num_data) {
+        printf("Error: No more images to extract.\n");
+        exit(1);
+    }
+
+    Matrix image = init_matrix(IMAGE_SIZE, 1);
+
+    for (int i = 0; i < IMAGE_SIZE; i++) {
+        image.data[i][0] = data_image[*current_index][i];
+    }
+
+    (*current_index)++;
+
+    return image;
 }

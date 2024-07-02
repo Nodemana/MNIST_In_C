@@ -1,0 +1,26 @@
+[
+{
+  "directory": "C:/Users/User/Documents/Projects/MNIST_In_C/build",
+  "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe   -g -std=gnu11 -o CMakeFiles\\cmnist.dir\\main.c.obj -c C:\\Users\\User\\Documents\\Projects\\MNIST_In_C\\main.c",
+  "file": "C:/Users/User/Documents/Projects/MNIST_In_C/main.c",
+  "output": "CMakeFiles/cmnist.dir/main.c.obj"
+},
+{
+  "directory": "C:/Users/User/Documents/Projects/MNIST_In_C/build",
+  "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe   -g -std=gnu11 -o CMakeFiles\\cmnist.dir\\matrixmath.c.obj -c C:\\Users\\User\\Documents\\Projects\\MNIST_In_C\\matrixmath.c",
+  "file": "C:/Users/User/Documents/Projects/MNIST_In_C/matrixmath.c",
+  "output": "CMakeFiles/cmnist.dir/matrixmath.c.obj"
+},
+{
+  "directory": "C:/Users/User/Documents/Projects/MNIST_In_C/build",
+  "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe   -g -std=gnu11 -o CMakeFiles\\cmnist.dir\\neural.c.obj -c C:\\Users\\User\\Documents\\Projects\\MNIST_In_C\\neural.c",
+  "file": "C:/Users/User/Documents/Projects/MNIST_In_C/neural.c",
+  "output": "CMakeFiles/cmnist.dir/neural.c.obj"
+},
+{
+  "directory": "C:/Users/User/Documents/Projects/MNIST_In_C/build",
+  "command": "C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe   -g -std=gnu11 -o CMakeFiles\\cmnist.dir\\sigmoid.c.obj -c C:\\Users\\User\\Documents\\Projects\\MNIST_In_C\\sigmoid.c",
+  "file": "C:/Users/User/Documents/Projects/MNIST_In_C/sigmoid.c",
+  "output": "CMakeFiles/cmnist.dir/sigmoid.c.obj"
+}
+]
