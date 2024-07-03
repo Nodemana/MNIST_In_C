@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\cmnist.dir/objects.a
+C:\ProgramData\mingw64\mingw64\bin\ar.exe qc CMakeFiles\cmnist.dir/objects.a @CMakeFiles\cmnist.dir\objects1.rsp
+C:\ProgramData\mingw64\mingw64\bin\gcc.exe -g -Wl,--whole-archive CMakeFiles\cmnist.dir/objects.a -Wl,--no-whole-archive -o cmnist.exe -Wl,--out-implib,libcmnist.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmnist.dir\linkLibs.rsp

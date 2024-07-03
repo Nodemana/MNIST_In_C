@@ -1,0 +1,3 @@
+C:/Users/User/Documents/Projects/MNIST_In_C/build/CMakeFiles/cmnist.dir
+C:/Users/User/Documents/Projects/MNIST_In_C/build/CMakeFiles/edit_cache.dir
+C:/Users/User/Documents/Projects/MNIST_In_C/build/CMakeFiles/rebuild_cache.dir

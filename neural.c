@@ -9,7 +9,15 @@ double squared_error(double y_hat, double y) {
 // the true matrix and the final activation output of the last layer.
 Matrix compute_cost_matrix(Matrix *predicted, Matrix *actual) {
     if(predicted->rows != actual->rows){
-        printf("ERROR: Dimension Mismatch!\n");
+        printf("ERROR: Line 12 Dimension Mismatch!\n");
+        printf("Matrix A rows and cols:\n");
+        printf("Rows %d\n", predicted->rows);
+        printf("Cols %d\n", predicted->cols);
+        //print_matrix(predicted);
+        printf("Matrix B:\n");
+        printf("Rows %d\n", actual->rows);
+        printf("Cols %d\n", actual->cols);
+        //print_matrix(actual);
         exit(EXIT_FAILURE);
     }
 
@@ -24,8 +32,23 @@ Matrix compute_cost_matrix(Matrix *predicted, Matrix *actual) {
 
 void compute_cost_matrix_sum(Matrix *sum, Matrix *predicted, Matrix *actual) {
     Matrix temp_cost_matrix = compute_cost_matrix(predicted, actual);
+    printf("Cost:\n");
+    print_matrix(&temp_cost_matrix); 
     matrix_add_inplace(sum, &temp_cost_matrix);
+    printf("Running Cost Sum\n");
+    print_matrix(sum);
     free_matrix(&temp_cost_matrix);
+}
+
+Matrix compute_batch_cost_matrix(Batch *batch){
+    Matrix cost_sum = init_matrix_value(batch->truths[0].rows, 1, 0);
+    int output_layer_number = batch->forwardpasses[0].num_activations - 1;
+    printf("output layer number %d\n", output_layer_number);
+    for(int i = 0; i < batch->batch_size; i++) {
+        printf("Iteration of cost sum: %d\n", i);
+        compute_cost_matrix_sum(&cost_sum, &batch->forwardpasses[i].activations[output_layer_number], &batch->truths[i]);
+    }
+    return cost_sum;
 }
 
 Matrix init_weights_layer(int neurons, int weights) {
@@ -131,15 +154,17 @@ ForwardPassResult forward_pass(Network *network, Matrix *input_layer) {
     return result;
 }
 
-Batch forward_pass_batch(Network *network, double (*data_image)[784], int batch_size, int num_samples) {
+Batch forward_pass_batch(Network *network, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN], int batch_size, int num_samples) {
     Batch batch;
     batch.batch_size = batch_size;
     batch.forwardpasses = malloc(batch.batch_size * sizeof(ForwardPassResult));
+    batch.truths = malloc(batch.batch_size * sizeof(Matrix));
 
     int current_index = 0;
     for(int i = 0; i < batch.batch_size; i++) {
         Matrix input = extract_next_image(data_image, &current_index, num_samples);
         batch.forwardpasses[i] = forward_pass(network, &input);
+        batch.truths[i] = init_truth_matrix(labels, &current_index);
         free_matrix(&input);
     }
 

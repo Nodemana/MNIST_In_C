@@ -1,9 +1,3 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include "sigmoid.h"
 #include "matrixmath.h"
 
 // Function to create a vector
