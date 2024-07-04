@@ -39,7 +39,11 @@ void matrix_add_inplace(Matrix *m, Matrix *n);
 
 Matrix matrix_scalar_divide(Matrix *m, double x);
 
+Matrix matrix_scalar_multiply(Matrix *m, double x);
+
 void matrix_scalar_divide_inplace(Matrix *m, double x);
+
+void matrix_scalar_multiply_inplace(Matrix *m, double x);
 
 Matrix transpose_matrix(Matrix *a);
 
@@ -52,6 +56,8 @@ Matrix init_matrix(int rows, int cols);
 Matrix init_matrix_value(int rows, int cols, double value); 
 
 Matrix activation(Matrix *m);
+
+Matrix derivative_activation(Matrix *m)
 
 void activation_inplace(Matrix *m);
 

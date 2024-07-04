@@ -56,6 +56,16 @@ Matrix matrix_multiply(Matrix *m, Matrix *n) {
     if (m->cols != n->rows) {
         printf("ERROR: Row and Column Mismatch!\n");
         exit(EXIT_FAILURE);
+        printf("ERROR: Line 12 Dimension Mismatch!\n");
+        printf("Matrix A rows and cols:\n");
+        printf("Rows %d\n", m->rows);
+        printf("Cols %d\n", m->cols);
+        //print_matrix(predicted);
+        printf("Matrix B:\n");
+        printf("Rows %d\n", n->rows);
+        printf("Cols %d\n", n->cols);
+        //print_matrix(actual);
+ 
     }
 
     Matrix result = matrix(m->rows, n->cols);
@@ -113,10 +123,28 @@ Matrix matrix_scalar_divide(Matrix *m, double x) {
     return result;
 }
 
+Matrix matrix_scalar_multiply(Matrix *m, double x) {
+    Matrix result = matrix(m->rows, m->cols);
+    for(int i = 0; i< m->rows; i++) {
+        for(int j = 0; j< m->cols; j++){
+            result.data[i][j] = m->data[i][j] * x;
+        }
+    }
+    return result;
+}
+
 void matrix_scalar_divide_inplace(Matrix *m, double x) {
     for (int i = 0; i < m->rows; i++) {
         for (int j = 0; j < m->cols; j++) {
             m->data[i][j] /= x;
+        }
+    }
+}
+
+void matrix_scalar_multiply_inplace(Matrix *m, double x) {
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            m->data[i][j] *= x;
         }
     }
 }
@@ -201,6 +229,17 @@ Matrix activation(Matrix *m) {
     for (int i = 0; i < m->rows; i++) {
         for (int j = 0; j < m->cols; j++) {
             result.data[i][j] = sigmoid(m->data[i][j]);        
+        }
+    }
+    return result;
+}
+
+Matrix derivative_activation(Matrix *m) {
+    Matrix result = matrix(m->rows, m->cols);
+
+    for (int i = 0; i < m->rows; i++) {
+        for (int j = 0; j < m->cols; j++) {
+            result.data[i][j] = derivative_sigmoid(m->data[i][j]);        
         }
     }
     return result;

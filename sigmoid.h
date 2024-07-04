@@ -6,6 +6,7 @@
 #define EULER_NUMBER_L 2.71828182845904523536
 
 double sigmoid(double n);
+double derivative_sigmoid(double n);
 float sigmoidf(float n);
 long double sigmoidl(long double n);
 

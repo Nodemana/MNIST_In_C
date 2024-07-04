@@ -5,6 +5,10 @@ double sigmoid(double n) {
     return (1 / (1 + pow(EULER_NUMBER, -n)));
 }
 
+double derivative_sigmoid(double n){
+    return sigmoid(n) * (1 - sigmoid(n));
+}
+
 float sigmoidf(float n) {
     return (1 / (1 + powf(EULER_NUMBER_F, -n)));
 }

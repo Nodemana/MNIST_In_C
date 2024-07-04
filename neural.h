@@ -13,15 +13,19 @@ typedef struct {
 typedef struct {
     int num_layers;
     Layer *layers;
+    Matrix *layer_error;
 } Network;
 
 typedef struct {
+    Matrix *z_values;
     Matrix *activations;
+    Matrix *errors;
     int num_activations;
-} ForwardPassResult;
+} SampleResult;
 
 typedef struct {
-    ForwardPassResult *forwardpasses;
+    SampleResult *sample_results;
+    Matrix *costs;
     Matrix *truths;
     int batch_size;
 } Batch;
@@ -50,9 +54,10 @@ void print_network(Network *network);
 
 Matrix forward_pass_layer(Layer *layer, Matrix *input);
 
-ForwardPassResult forward_pass(Network *network, Matrix *input_layer);
+SampleResult forward_pass(Network *network, Matrix *input_layer);
 
 Batch forward_pass_batch(Network *network, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN],  int batch_size, int num_samples);
+
 
 #endif
 

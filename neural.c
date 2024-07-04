@@ -80,10 +80,11 @@ Network init_network(int num_layers, int *layer_sizes, int input_layer_size) {
     Network network;
     network.num_layers = num_layers;
     network.layers = (Layer *)malloc(num_layers * sizeof(Layer));
+    network.layer_error = malloc(num_layers * sizeof(Matrix));
 
     for (int i = 0; i < num_layers; i++) {
         int neurons = layer_sizes[i];
-        int connections = (i == 0) ? input_layer_size : layer_sizes[i - 1];  // Connections i.e wieghts and bias matrices are neurons[i-1] * neurons[i]
+        int connections = (i == 0) ? input_layer_size : layer_sizes[i - 1];  // Connections i.e wieghts and bias matrices are neurons[i-1]
         network.layers[i] = init_layer(neurons, connections);
     }
 
@@ -122,32 +123,34 @@ void print_network(Network *network) {
     }
 }
 
-Matrix forward_pass_layer(Layer *layer, Matrix *input) {
+Matrix calculate_z(Layer *layer, Matrix *input) {
     Matrix result = matrix_multiply(&layer->weights, input);
     matrix_add_inplace(&result, &layer->biases);
-    activation_inplace(&result);
     return result;
 }
 
-ForwardPassResult forward_pass(Network *network, Matrix *input_layer) {
-    ForwardPassResult result;
-    result.num_activations = network->num_layers + 1;  // +1 for input layer
+
+
+SampleResult forward_pass(Network *network, Matrix *input_layer) {
+    SampleResult result;
+    result.num_activations = network->num_layers;   
     result.activations = malloc(result.num_activations * sizeof(Matrix));
-    
-    // Store input as first activation
-    result.activations[0] = copy_matrix(input_layer);
+    result.z_values = malloc(result.num_activations * sizeof(Matrix));
+    result.errors = malloc(result.num_activations * sizeof(Matrix));
+
 
     Matrix current_input = copy_matrix(input_layer);
 
     for (int i = 0; i < network->num_layers; i++) {
-        Matrix layer_output = forward_pass_layer(&network->layers[i], &current_input);
-        
-        // Store the activation
-        result.activations[i + 1] = copy_matrix(&layer_output);
+        Matrix z = calculate_z(&network->layers[i], &current_input);
+        Matrix a = activation(&z); 
 
+        // Store the z value and activation
+        result.activations[i + 1] = copy_matrix(&a);
+        result.z_values[i + 1] = copy_matrix(&z);
         // Free the previous input and update for next iteration
         free_matrix(&current_input);
-        current_input = layer_output;
+        current_input = a;
     }
 
     // The last activation is also the final output
@@ -159,12 +162,20 @@ Batch forward_pass_batch(Network *network, double data_image[][IMAGE_SIZE], int 
     batch.batch_size = batch_size;
     batch.forwardpasses = malloc(batch.batch_size * sizeof(ForwardPassResult));
     batch.truths = malloc(batch.batch_size * sizeof(Matrix));
-
+    batch.costs = malloc(batch.batch_size * sizeof(Matrix));
+    int output_layer_number = network->num_layers;
+    
     int current_index = 0;
     for(int i = 0; i < batch.batch_size; i++) {
+        printf("Batch %d\n", i);
         Matrix input = extract_next_image(data_image, &current_index, num_samples);
+        printf("Input Layer Generated\n");
         batch.forwardpasses[i] = forward_pass(network, &input);
+        printf("Forward Pass Calculated\n");
         batch.truths[i] = init_truth_matrix(labels, &current_index);
+        printf("Truth Matrix Generated\n");
+        batch.costs[i] = compute_cost_matrix(&batch.forwardpasses[i].activations[output_layer_number], &batch.truths[i]);
+        printf("Cost Matrix Calculated\n");
         free_matrix(&input);
     }
 
@@ -177,4 +188,33 @@ void free_forward_pass_result(ForwardPassResult *result) {
         free_matrix(&result->activations[i]);
     }
     free(result->activations);
+}
+
+Matrix calculate_output_layer_error(Matrix *cost_matrix, Matrix *current_z_value) {
+    Matrix layer_error = matrix_multiply(cost_matrix, current_z_value);
+    return layer_error;
+}
+
+
+Matrix calculate_hidden_layer_error(Matrix *current_z_value, Matrix *next_cost, Matrix *next_layer_weights) {
+    Matrix backwards_weights = matrix_multiply(next_layer_weights, next_cost);
+    Matrix sigmoid_prime_z_value = sigmoid_derivative(current_z_value);
+    Matrix layer_error = matrix_multiply(&backwards_weights, &sigmoid_prime_z_value);
+
+    free_matrix(&backwards_weights);
+    free_matrix(&sigmoid_prime_z_value);
+    return layer_error;
+}   
+
+void backwards_pass_network(Matrix *network, SampleResult *sample_result, Matrix *cost_matrix) {
+    int num_layers = network->num_layers;
+    Matrix output_layer_error = calculate_output_layer_error(cost_matrix, sample_result->z_values[num_layers-1]);
+    sample_result->errors[num_layers-1] = copy_matrix(&output_layer_error);
+    free_matrix(output_layer_error);
+    
+    for(int i = num_layers-2; i >= 0; i--){
+        Matrix hidden_layer_error = calculate_hidden_layer_error(sample_result->z_values[i], sample_result->activations[i+1], network->layers[i+1].weights);
+        sample_result->errors[i] = copy_matrix(&hidden_layer_error);
+        free_matrix(&hidden_layer_error);
+    } 
 }
