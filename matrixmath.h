@@ -31,6 +31,8 @@ void print_vector(Vector *v);
 
 void print_matrix(Matrix *m);
 
+Matrix element_wise(Matrix *m, Matrix *n);
+
 Matrix matrix_multiply(Matrix *m, Matrix *n);
 
 Matrix matrix_add(Matrix *m, Matrix *n);
@@ -57,7 +59,7 @@ Matrix init_matrix_value(int rows, int cols, double value);
 
 Matrix activation(Matrix *m);
 
-Matrix derivative_activation(Matrix *m)
+Matrix derivative_activation(Matrix *m);
 
 void activation_inplace(Matrix *m);
 
@@ -66,5 +68,7 @@ Matrix sum_horizontally(Matrix *m);
 Matrix sum_vertically(Matrix *m);
 
 Matrix copy_matrix(Matrix *m);
+
+int argmax(Matrix *matrix);
 
 #endif

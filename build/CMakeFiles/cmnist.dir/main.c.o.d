@@ -46,4 +46,5 @@ CMakeFiles/cmnist.dir/main.c.o: /home/zach/projects/MNIST_C_NN/main.c \
  /home/zach/projects/MNIST_C_NN/mnist.h /usr/include/fcntl.h \
  /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
  /usr/include/bits/stat.h /usr/include/bits/struct_stat.h \
- /usr/include/string.h /usr/include/strings.h
+ /usr/include/string.h /usr/include/strings.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include/stdbool.h

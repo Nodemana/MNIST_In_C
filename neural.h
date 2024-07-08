@@ -4,6 +4,7 @@
 #include "matrixmath.h"
 #include "mnist.h"
 #include <math.h>
+#include <stdbool.h>
 
 typedef struct {
     Matrix weights;
@@ -12,11 +13,13 @@ typedef struct {
 
 typedef struct {
     int num_layers;
+    int *layer_sizes;
     Layer *layers;
     Matrix *layer_error;
 } Network;
 
 typedef struct {
+    Matrix input_layer;
     Matrix *z_values;
     Matrix *activations;
     Matrix *errors;
@@ -25,8 +28,10 @@ typedef struct {
 
 typedef struct {
     SampleResult *sample_results;
-    Matrix *costs;
-    Matrix *truths;
+    Matrix *costs; // Per sample
+    Matrix *truths; // Per sample
+    Matrix *batch_layer_error; // Per layer
+    Matrix *weights_layer_error;
     int batch_size;
 } Batch;
 
@@ -56,8 +61,25 @@ Matrix forward_pass_layer(Layer *layer, Matrix *input);
 
 SampleResult forward_pass(Network *network, Matrix *input_layer);
 
-Batch forward_pass_batch(Network *network, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN],  int batch_size, int num_samples);
+Batch init_batch(Network *network, int batch_size); 
 
+void forward_pass_batch(Network *network, Batch *batch, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN], int num_samples, int batch_number);
+
+Matrix calculate_output_layer_error(Matrix *cost_matrix, Matrix *current_z_value);
+
+Matrix calculate_hidden_layer_error(Matrix *current_z_value, Matrix *next_cost, Matrix *next_layer_weights);
+
+void backwards_pass_network(Network *network, SampleResult *sample_result, Matrix *cost_matrix);
+
+void backwards_pass_batch(Network *network, Batch *batch);
+
+void adjust_weights_and_biases(Network *network, Batch *batch, double learning_rate);
+
+bool evaluate_sample_performance(SampleResult *sample, Matrix *truth_matrix);
+
+double evaluate_batch_performance(Batch *batch); 
+
+void train_network(Network *network, int batch_size, int epochs, double learning_rate, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN]);
 
 #endif
 

@@ -59,7 +59,7 @@ void label_char2int(int num_data, unsigned char data_label_char[][1], int data_l
 
 void load_mnist();
 
-
+void print_mnist_image(double data_image[][SIZE], int index);
 
 void print_mnist_pixel(double data_image[][SIZE], int num_data);
 

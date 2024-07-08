@@ -103,6 +103,15 @@ void print_mnist_pixel(double data_image[][SIZE], int num_data)
     }
 }
 
+void print_mnist_image(double data_image[][SIZE], int index) {
+    int j;
+    for (j=0; j<SIZE; j++) {
+        printf("%1.1f ", data_image[index][j]);
+        if ((j+1) % 28 == 0) putchar('\n');
+    }
+    putchar('\n'); 
+}
+
 void print_mnist_label(int data_label[], int num_data)
 {
     int i;
@@ -173,7 +182,7 @@ Matrix extract_next_image(double data_image[][IMAGE_SIZE], int *current_index, i
         image.data[i][0] = data_image[*current_index][i];
     }
 
-    (*current_index)++;
+    //(*current_index)++;
 
     return image;
 }

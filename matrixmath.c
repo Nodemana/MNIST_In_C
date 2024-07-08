@@ -49,14 +49,27 @@ void print_matrix(Matrix *m) {
     }
 }
 
+Matrix element_wise(Matrix *m, Matrix *n) { 
+    if(m->rows != n->rows) {
+        printf("ERROR: Dimensions innappropriate for element wise operation.\n");
+        printf("Matrix A Rows: %d, Matrix B Rows: %d\n", m->rows, n->rows);
+        exit(EXIT_FAILURE);
+    }
+    Matrix result = matrix(m->rows, m->cols);
+    for(int i = 0; i < m->rows; i++){
+       result.data[i][0] =  m->data[i][0] * n->data[i][0];
+    }
+    return result;
+}
+
 // Function to multiply two matrices
 // This function is used to compute the dot product between the last activation
 // and the next layers weights.
 Matrix matrix_multiply(Matrix *m, Matrix *n) {
     if (m->cols != n->rows) {
-        printf("ERROR: Row and Column Mismatch!\n");
-        exit(EXIT_FAILURE);
-        printf("ERROR: Line 12 Dimension Mismatch!\n");
+        //printf("ERROR: Row and Column Mismatch!\n");
+        //exit(EXIT_FAILURE);
+        printf("ERROR: Multiply Dimension Mismatch!\n");
         printf("Matrix A rows and cols:\n");
         printf("Rows %d\n", m->rows);
         printf("Cols %d\n", m->cols);
@@ -64,8 +77,7 @@ Matrix matrix_multiply(Matrix *m, Matrix *n) {
         printf("Matrix B:\n");
         printf("Rows %d\n", n->rows);
         printf("Cols %d\n", n->cols);
-        //print_matrix(actual);
- 
+        exit(EXIT_FAILURE);
     }
 
     Matrix result = matrix(m->rows, n->cols);
@@ -262,4 +274,17 @@ Matrix copy_matrix(Matrix *m) {
         }
     }
     return copy;
+}
+
+// Function to find the index of the maximum value in a matrix row
+int argmax(Matrix *matrix) {
+    int max_index = 0;
+    double max_value = matrix->data[0][0];
+    for (int i = 1; i < matrix->rows * matrix->cols; i++) {
+        if (matrix->data[i][0] > max_value) {
+            max_value = matrix->data[i][0];
+            max_index = i;
+        }
+    }
+    return max_index;
 }
