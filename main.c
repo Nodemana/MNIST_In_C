@@ -14,15 +14,15 @@ int main() {
     //printf("Label: %d \n", train_label[current_index]);
     //printf("Image extracted\n");
 
-    int num_layers = 3;
-    int layer_sizes[] = {128, 64, 10};
+    int num_layers = 2;
+    int layer_sizes[] = {64, 10};
     int input_layer_size = 784;
 
     Network network = init_network(num_layers, layer_sizes, input_layer_size);
     //for(int i = 0; i < network.num_layers; i++) {
     //    print_layer(&network.layers[i]);
     //}
-    train_network(&network, 64, 5, 0.01, train_image, train_label);
+    train_network(&network, 1, 5, 0.5, train_image, train_label);
     
     free_network(&network);
 

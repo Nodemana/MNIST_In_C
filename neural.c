@@ -194,7 +194,7 @@ void forward_pass_batch(Network *network, Batch *batch, double data_image[][IMAG
             exit(1);
         }
         Matrix input = extract_next_image(data_image, &current_index, num_samples);
-        print_mnist_image(data_image, current_index);
+        //print_mnist_image(data_image, current_index);
         //printf("Input Layer Generated (rows: %d, cols: %d)\n", input.rows, input.cols);
         batch->sample_results[i] = forward_pass(network, &input);
         //printf("Forward Pass Calculated\n");
@@ -297,7 +297,8 @@ Matrix calculate_output_layer_error(Matrix *cost_matrix, Matrix *current_z_value
     //Matrix transposed_cost = transpose_matrix(cost_matrix);
     //printf("Transposed Cost (rows = %d, cols = %d)\n", transposed_cost.rows, transposed_cost.cols);
     //printf("Current Z Value (rows = %d, cols = %d)\n", current_z_value->rows, current_z_value->cols);
-    Matrix layer_error = element_wise(cost_matrix, current_z_value);
+    Matrix prime_sigmoid_z_value = derivative_activation(current_z_value);
+    Matrix layer_error = element_wise(cost_matrix, &prime_sigmoid_z_value);
     //free_matrix(&transposed_cost);
     return layer_error;
 }
@@ -397,16 +398,68 @@ void backwards_pass_batch(Network *network, Batch *batch) {
     }
 }
 
-void adjust_weights_and_biases(Network *network, Batch *batch, double learning_rate){
-    for(int i = 0; i < network->num_layers; i++){
+void adjust_weights_and_biases(Network *network, Batch *batch, double learning_rate) {
+    for(int i = 0; i < network->num_layers; i++) {
+        printf("Layer %d:\n", i+1);
+        
+        // Print a sample of weights before update
+        printf("Sample weights before update:\n");
+        for (int j = 0; j < 5 && j < network->layers[i].weights.rows; j++) {
+            for (int k = 0; k < 5 && k < network->layers[i].weights.cols; k++) {
+                printf("%f ", network->layers[i].weights.data[j][k]);
+            }
+            printf("\n");
+        }
+
         Matrix weights_error_step = matrix_scalar_multiply(&batch->weights_layer_error[i], learning_rate);
         matrix_scalar_multiply_inplace(&weights_error_step, -1);
+        
+        // Print the same sample of weight updates
+        printf("Sample weight updates:\n");
+        for (int j = 0; j < 5 && j < weights_error_step.rows; j++) {
+            for (int k = 0; k < 5 && k < weights_error_step.cols; k++) {
+                printf("%f ", weights_error_step.data[j][k]);
+            }
+            printf("\n");
+        }
+
         matrix_add_inplace(&network->layers[i].weights, &weights_error_step);
+        
+        // Print the same sample of weights after update
+        printf("Sample weights after update:\n");
+        for (int j = 0; j < 5 && j < network->layers[i].weights.rows; j++) {
+            for (int k = 0; k < 5 && k < network->layers[i].weights.cols; k++) {
+                printf("%f ", network->layers[i].weights.data[j][k]);
+            }
+            printf("\n");
+        }
+
         free_matrix(&weights_error_step);
+
+        // Similar process for biases
+        printf("Sample biases before update:\n");
+        for (int j = 0; j < 5 && j < network->layers[i].biases.rows; j++) {
+            printf("%f ", network->layers[i].biases.data[j][0]);
+        }
+        printf("\n");
 
         Matrix bias_error_step = matrix_scalar_multiply(&batch->batch_layer_error[i], learning_rate);
         matrix_scalar_multiply_inplace(&bias_error_step, -1);
+        
+        printf("Sample bias updates:\n");
+        for (int j = 0; j < 5 && j < bias_error_step.rows; j++) {
+            printf("%f ", bias_error_step.data[j][0]);
+        }
+        printf("\n");
+
         matrix_add_inplace(&network->layers[i].biases, &bias_error_step);
+        
+        printf("Sample biases after update:\n");
+        for (int j = 0; j < 5 && j < network->layers[i].biases.rows; j++) {
+            printf("%f ", network->layers[i].biases.data[j][0]);
+        }
+        printf("\n\n");
+
         free_matrix(&bias_error_step);
     }
 }
