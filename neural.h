@@ -57,6 +57,8 @@ void print_layer(Layer *layer);
 
 void print_network(Network *network);
 
+void normalise_input(Matrix *input);
+
 Matrix forward_pass_layer(Layer *layer, Matrix *input);
 
 SampleResult forward_pass(Network *network, Matrix *input_layer);
@@ -74,6 +76,8 @@ void backwards_pass_network(Network *network, SampleResult *sample_result, Matri
 void backwards_pass_batch(Network *network, Batch *batch);
 
 void adjust_weights_and_biases(Network *network, Batch *batch, double learning_rate);
+
+void clip_gradients(Matrix *m, double threshold);
 
 bool evaluate_sample_performance(SampleResult *sample, Matrix *truth_matrix);
 

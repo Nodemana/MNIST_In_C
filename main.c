@@ -15,14 +15,15 @@ int main() {
     //printf("Image extracted\n");
 
     int num_layers = 2;
-    int layer_sizes[] = {64, 10};
+    int layer_sizes[] = {100, 10};
     int input_layer_size = 784;
 
     Network network = init_network(num_layers, layer_sizes, input_layer_size);
     //for(int i = 0; i < network.num_layers; i++) {
     //    print_layer(&network.layers[i]);
     //}
-    train_network(&network, 1, 5, 0.5, train_image, train_label);
+    //train_network(Network *network, int batch_size, int epochs, double learning_rate,  double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN])
+    train_network(&network, 1, 100, 0.01, train_image, train_label);
     
     free_network(&network);
 
