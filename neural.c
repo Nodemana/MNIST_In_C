@@ -8,32 +8,25 @@ double squared_error(double y_hat, double y) {
 // For one training sample this can calculate the cost function between
 // the true matrix and the final activation output of the last layer.
 Matrix compute_cost_matrix(Matrix *predicted, Matrix *actual) {
-    if(predicted->rows != actual->rows){
-        printf("ERROR: Line 12 Dimension Mismatch!\n");
-        printf("Matrix A rows and cols:\n");
-        printf("Rows %d\n", predicted->rows);
-        printf("Cols %d\n", predicted->cols);
-        //print_matrix(predicted);
-        printf("Matrix B:\n");
-        printf("Rows %d\n", actual->rows);
-        printf("Cols %d\n", actual->cols);
-        //print_matrix(actual);
+    if(predicted->rows != actual->rows || predicted->cols != actual->cols){
+        printf("ERROR: Dimension Mismatch in compute_cost_matrix!\n");
+        printf("Predicted Matrix: %d x %d\n", predicted->rows, predicted->cols);
+        printf("Actual Matrix: %d x %d\n", actual->rows, actual->cols);
         exit(EXIT_FAILURE);
     }
-
-    Matrix cost = matrix(predicted->rows, 1);
-
+    Matrix difference = matrix(predicted->rows, predicted->cols);
     for(int i = 0; i < predicted->rows; i++) {
-        cost.data[i][0] = squared_error(predicted->data[i][0], actual->data[i][0]);
+        for(int j = 0; j < predicted->cols; j++) {
+            difference.data[i][j] = predicted->data[i][j] - actual->data[i][j]; // Calculate (predicted - actual)
+        }
     }
-
-    return cost;
+    return difference;
 }
 
 void compute_cost_matrix_sum(Matrix *sum, Matrix *predicted, Matrix *actual) {
     Matrix temp_cost_matrix = compute_cost_matrix(predicted, actual);
     printf("Cost:\n");
-    print_matrix(&temp_cost_matrix); 
+    print_matrix(&temp_cost_matrix);
     matrix_add_inplace(sum, &temp_cost_matrix);
     printf("Running Cost Sum\n");
     print_matrix(sum);
@@ -65,13 +58,13 @@ Matrix init_weights_layer(int neurons, int weights) {
 Matrix init_truth_matrix(int *train_label, int *current_index) {
     Matrix truth = init_matrix_value(10, 1, 0);
 
-    truth.data[train_label[*current_index]][0] = 1; 
-    
+    truth.data[train_label[*current_index]][0] = 1;
+
     return truth;
 }
 
 Matrix init_bias_layer(int neurons, int biases) {
-    Matrix layer = init_matrix_value(neurons, biases, 0.1); 
+    Matrix layer = init_matrix_value(neurons, biases, 0.1);
     return layer;
 }
 
@@ -93,7 +86,7 @@ Network init_network(int num_layers, int *layer_sizes, int input_layer_size) {
         int neurons = layer_sizes[i];
         int connections = (i == 0) ? input_layer_size : layer_sizes[i - 1];
         network.layers[i] = init_layer(neurons, connections);
-        
+
         // Print the dimensions of each layer for debugging
         printf("Layer %d: %d neurons, %d connections\n", i+1, neurons, connections);
         printf("Weight matrix dimensions: %d x %d\n", network.layers[i].weights.rows, network.layers[i].weights.cols);
@@ -160,7 +153,7 @@ SampleResult forward_pass(Network *network, Matrix *input_layer) {
 
     for (int i = 0; i < network->num_layers; i++) {
         Matrix z = calculate_z(&network->layers[i], &current_input);
-        Matrix a = activation(&z); 
+        Matrix a = activation(&z);
 
         // Store the z value and activation
         result.activations[i] = copy_matrix(&a);
@@ -171,7 +164,7 @@ SampleResult forward_pass(Network *network, Matrix *input_layer) {
             free_matrix(&current_input);
         }
         free_matrix(&z);
-        
+
         current_input = a;  // Transfer ownership
     }
 
@@ -200,7 +193,7 @@ Batch init_batch(Network *network, int batch_size) {
 
 void forward_pass_batch(Network *network, Batch *batch, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN], int num_samples, int batch_number) {
     int output_layer_number = network->num_layers - 1;  // Adjust this if necessary
-    
+
     int current_index = 0;
     for(int i = 0; i < batch->batch_size; i++) {
         current_index = batch_number*batch->batch_size + i;
@@ -310,19 +303,24 @@ void free_batch(Batch *batch, int num_layers) {
     }
 }
 
-Matrix calculate_output_layer_error(Matrix *cost_matrix, Matrix *current_z_value) {
-    printf("Z(L)0 Neuron 1: %f\n", current_z_value->data[0][0]);
+Matrix calculate_output_layer_error(Matrix *predicted_output, Matrix *actual_output, Matrix *current_z_value) {
+    // Calculate the error term (predicted - actual)
+    Matrix error_term = compute_cost_matrix(predicted_output, actual_output); // Use the modified compute_cost_matrix
+
+    // Calculate sigmoid'(z_output)
     Matrix sigmoid_prime_z_value = derivative_activation(current_z_value);
-    printf("sigmoid prime(Z(L)0) Neuron 1: %f\n", sigmoid_prime_z_value.data[0][0]);
-    printf("cost(L)0 Neuron 1: %f\n", cost_matrix->data[0][0]);
-    Matrix layer_error = element_wise(cost_matrix, &sigmoid_prime_z_value);
-    printf("Output Layer Error Neuron 1: %f\n", layer_error.data[0][0]);
+
+    // Calculate the output layer error: (predicted - actual) element-wise multiply sigmoid'(z)
+    Matrix layer_error = element_wise(&error_term, &sigmoid_prime_z_value);
+
+    free_matrix(&error_term);
     free_matrix(&sigmoid_prime_z_value);
+
     return layer_error;
 }
 
 Matrix calculate_hidden_layer_error(Matrix *current_z_value, Matrix *next_layer_error, Matrix *next_layer_weights) {
-    
+
     Matrix transposed_next_layer_weights = transpose_matrix(next_layer_weights);
     printf("W(L+1)0.T Neuron 1: %f\n", transposed_next_layer_weights.data[0][0]);
     printf("Error(L+1)0 Neuron 1: %f\n", next_layer_error->data[0][0]);
@@ -338,23 +336,25 @@ Matrix calculate_hidden_layer_error(Matrix *current_z_value, Matrix *next_layer_
     free_matrix(&backwards_error);
     free_matrix(&sigmoid_prime_z_value);
     free_matrix(&transposed_next_layer_weights);
-    
+
     return layer_error;
 }
 
-void backwards_pass_network(Network *network, SampleResult *sample_result, Matrix *cost_matrix) {
+void backwards_pass_network(Network *network, SampleResult *sample_result, Matrix *truth_matrix) {
     int num_layers = network->num_layers;
     printf("\nOutput Layer:\n");
-    Matrix output_layer_error = calculate_output_layer_error(cost_matrix, &sample_result->z_values[num_layers-1]);
+    // Pass predicted output, actual truth, and z_value to the calculation function
+    Matrix output_layer_error = calculate_output_layer_error(&sample_result->activations[num_layers-1], truth_matrix, &sample_result->z_values[num_layers-1]);
     sample_result->errors[num_layers-1] = copy_matrix(&output_layer_error);
     free_matrix(&output_layer_error);
-    
+
+    // Propagate the error backwards through hidden layers
     for(int i = num_layers-2; i >= 0; i--) {
         printf("\nHidden Layer %d\n", i);
         Matrix hidden_layer_error = calculate_hidden_layer_error(&sample_result->z_values[i], &sample_result->errors[i+1], &network->layers[i+1].weights);
         sample_result->errors[i] = copy_matrix(&hidden_layer_error);
         free_matrix(&hidden_layer_error);
-    } 
+    }
 }
 
 void backwards_pass_batch(Network *network, Batch *batch) {
@@ -364,17 +364,15 @@ void backwards_pass_batch(Network *network, Batch *batch) {
     }
 
     for(int i = 0; i < batch->batch_size; i++) {
-        // Compute errors for this sample
-        backwards_pass_network(network, &batch->sample_results[i], &batch->costs[i]);
+        // Compute errors for this sample, passing the truth matrix
+        backwards_pass_network(network, &batch->sample_results[i], &batch->truths[i]);
 
-        // Accumulate errors and weight gradients
+        // Accumulate errors and weight gradients (rest of this function remains largely the same)
         for(int j = 0; j < network->num_layers; j++) {
             printf("Layer: %d\n", j);
-            printf("Error Total Neuron 1: %f\n", batch->batch_layer_error[j].data[0][0]);
-            printf("Error Batch %d Neuron 1: %f\n", i, batch->sample_results[i].errors[j].data[0][0]);
-            // Accumulate layer errors
+            // Accumulate layer errors (for bias updates)
             matrix_add_inplace(&batch->batch_layer_error[j], &batch->sample_results[i].errors[j]);
-            printf("Error Total Neuron 1: %f\n", batch->batch_layer_error[j].data[0][0]); 
+
             // Compute and accumulate weight gradients
             Matrix transposed_activation;
             if (j == 0) {
@@ -382,27 +380,10 @@ void backwards_pass_batch(Network *network, Batch *batch) {
             } else {
                 transposed_activation = transpose_matrix(&batch->sample_results[i].activations[j-1]);
             }
-            printf("\na(L-1).T Neuron 1: %f\n", transposed_activation.data[0][0]);
-            int zero_count = 0;
-            int total_elements = transposed_activation.rows * transposed_activation.cols;
 
-            for (int i = 0; i < transposed_activation.rows; i++) {
-                for (int j = 0; j < transposed_activation.cols; j++) {
-                    if (transposed_activation.data[i][j] == 0.0) {
-                        zero_count++;
-                    }
-                 }
-            }
-
-            printf("Number of zero elements in a(L-1).T: %d out of %d\n", zero_count, total_elements);
-            printf("Percentage of zero elements: %.2f%%\n", (float)zero_count / total_elements * 100);
-            
-            printf("Error Neuron 1: %f\n", batch->sample_results[i].errors[j].data[0][0]);
             Matrix weights_error = matrix_multiply(&batch->sample_results[i].errors[j], &transposed_activation);
-            printf("dW(L) Neuron 1: %f\n", weights_error.data[0][0]);
-            printf("dW Total(L): %f\n", batch->weights_layer_error[j].data[0][0]);
             matrix_add_inplace(&batch->weights_layer_error[j], &weights_error);
-            printf("dW Total(L) + dW(L): %f\n", batch->weights_layer_error[j].data[0][0]);
+
             free_matrix(&weights_error);
             free_matrix(&transposed_activation);
         }
@@ -411,19 +392,17 @@ void backwards_pass_batch(Network *network, Batch *batch) {
     // Average the accumulated errors and gradients
     for(int k = 0; k < network->num_layers; k++) {
         matrix_scalar_divide_inplace(&batch->batch_layer_error[k], batch->batch_size);
-        printf("\ndW Total(%d) Before Average Neuron 1: %f\n", k, batch->weights_layer_error[k].data[0][0]); 
         matrix_scalar_divide_inplace(&batch->weights_layer_error[k], batch->batch_size);
-        printf("dW Total(%d)/%d: %f\n", k, batch->batch_size, batch->weights_layer_error[k].data[0][0]);
     }
 }
 
 void adjust_weights_and_biases(Network *network, Batch *batch, double learning_rate) {
     for(int i = 0; i < network->num_layers; i++) {
        // printf("Layer %d:\n", i+1);
-        
+
         Matrix weights_error_step = matrix_scalar_multiply(&batch->weights_layer_error[i], learning_rate);
         matrix_scalar_multiply_inplace(&weights_error_step, -1);
-        
+
         // Print the same sample of weight updates
        // printf("Sample weight updates:\n");
         //for (int j = 0; j < 5 && j < weights_error_step.rows; j++) {
@@ -448,13 +427,13 @@ void adjust_weights_and_biases(Network *network, Batch *batch, double learning_r
 bool evaluate_sample_performance(SampleResult *sample, Matrix *truth_matrix) {
     // Assuming the last activation is the output layer
     Matrix *output = &sample->activations[sample->num_activations - 1];
-    
+
     // Find the predicted class (index of the maximum value in the output)
     int predicted_class = argmax(output);
-    
+
     // Find the true class (index of the maximum value in the truth matrix)
     int true_class = argmax(truth_matrix);
-    
+
     // Check if the predicted class matches the true class
     return predicted_class == true_class;
 }

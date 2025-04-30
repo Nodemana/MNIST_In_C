@@ -63,15 +63,15 @@ Matrix forward_pass_layer(Layer *layer, Matrix *input);
 
 SampleResult forward_pass(Network *network, Matrix *input_layer);
 
-Batch init_batch(Network *network, int batch_size); 
+Batch init_batch(Network *network, int batch_size);
 
 void forward_pass_batch(Network *network, Batch *batch, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN], int num_samples, int batch_number);
 
-Matrix calculate_output_layer_error(Matrix *cost_matrix, Matrix *current_z_value);
+Matrix calculate_output_layer_error(Matrix *predicted_output, Matrix *actual_output, Matrix *current_z_value);
 
 Matrix calculate_hidden_layer_error(Matrix *current_z_value, Matrix *next_cost, Matrix *next_layer_weights);
 
-void backwards_pass_network(Network *network, SampleResult *sample_result, Matrix *cost_matrix);
+void backwards_pass_network(Network *network, SampleResult *sample_result, Matrix *truth_matrix);
 
 void backwards_pass_batch(Network *network, Batch *batch);
 
@@ -81,9 +81,8 @@ void clip_gradients(Matrix *m, double threshold);
 
 bool evaluate_sample_performance(SampleResult *sample, Matrix *truth_matrix);
 
-double evaluate_batch_performance(Batch *batch); 
+double evaluate_batch_performance(Batch *batch);
 
 void train_network(Network *network, int batch_size, int epochs, double learning_rate, double data_image[][IMAGE_SIZE], int labels[NUM_TRAIN]);
 
 #endif
-
