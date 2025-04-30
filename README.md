@@ -2,6 +2,8 @@
 
 This project implements a basic feedforward neural network in C from scratch to classify handwritten digits from the MNIST dataset. It demonstrates the core concepts of neural networks, including forward propagation, backpropagation, and gradient descent.
 
+This project was a deeply rewarding experience, significantly enhancing my C programming skills through the implementation of a custom matrix math library. It also provided hands-on experience with deep learning fundamentals, particularly in developing the backpropagation algorithm from scratch. Debugging the network's failure to learn proved to be a significant challenge, one that led me to set the project aside for nine months. I'm incredibly pleased to have finally identified the root cause: an incorrect application of the reverse chain rule in the squared error loss function derivative, where I mistakenly retained the squared term instead of using the simple difference.
+
 ## Project Structure
 
 The project is organized into several C source and header files:
@@ -42,8 +44,7 @@ Place the four MNIST data files into a directory named `data` at the root of you
 
 2. Compile the source files using a C compiler. If you are using GCC, you can use the following command:
 
-gcc main.c matrixmath.c mnist.c neural.c sigmoid.c -o mnist_neural_network -lm
-
+`gcc main.c matrixmath.c mnist.c neural.c sigmoid.c -o mnist_neural_network -lm`
 
 This command compiles all the necessary `.c` files and links the math library (`-lm`), creating an executable file named `mnist_neural_network`.
 
@@ -51,8 +52,7 @@ This command compiles all the necessary `.c` files and links the math library (`
 
 After successfully building the project and setting up the data directory, you can run the executable from your terminal:
 
-./mnist_neural_network
-
+`./mnist_neural_network`
 
 The program will load the MNIST data, initialize the neural network, and begin the training process. You will see output in the console indicating the training progress, including batch accuracy.
 
